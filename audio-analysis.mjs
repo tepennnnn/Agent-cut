@@ -1,0 +1,15 @@
+import {audioFilter,run,EditError} from './engine.mjs';
+import {timeSeconds} from './sequences.mjs';
+export async function analyzeAudio(store,args){
+ const project=await store.snapshot();if(args.expectedProjectId!==undefined&&args.expectedProjectId!==project.projectId)throw new EditError('PROJECT_MISMATCH','Read the intended project before analysis.');
+ if(project.schemaVersion!==2)throw new EditError('UNSUPPORTED_VERSION','Item audio analysis requires a v2 project.');
+ const sequence=project.sequences.find(s=>s.id===(args.sequenceId||project.activeSequenceId)),entry=sequence?.tracks.flatMap(track=>track.items.map(item=>({track,item}))).find(e=>e.item.id===args.itemId);
+ if(!entry||entry.track.kind!=='audio')throw new EditError('INVALID_ARGUMENT','Choose an audio item.');
+ if(args.targetLUFS!==undefined&&(!Number.isFinite(args.targetLUFS)||args.targetLUFS< -36||args.targetLUFS> -5))throw new EditError('INVALID_ARGUMENT','Target loudness must be -36 to -5 LUFS.');
+ if(entry.item.speedCurve)throw new EditError('UNSUPPORTED_SOURCE','Isolated audio analysis does not yet support speed curves; inspect the composed output instead.');const {item}=entry,asset=project.assets.find(a=>a.id===item.assetId);if(asset.kind==='sequence')throw new EditError('UNSUPPORTED_SOURCE','Measure source audio in the nested sequence directly.');const {err}=await run(store.ffmpeg,['-hide_banner','-nostdin','-protocol_whitelist','file,pipe','-ss',String(item.sourceIn),'-t',String(item.sourceOut-item.sourceIn),'-i',store.assetPath(asset),'-vn','-af',`${audioFilter(item)},atrim=duration=${timeSeconds(item.duration)},volumedetect,ebur128=peak=true`,'-f','null','-'],{timeout:120000});
+ const last=pattern=>{const matches=[...err.matchAll(pattern)],value=matches.at(-1)?.[1];return value!==undefined&&Number.isFinite(Number(value))?Number(value):null;};
+ const meanDbFS=last(/mean_volume:\s+(-?[\d.]+|-inf) dB/g),peakDbFS=last(/max_volume:\s+(-?[\d.]+|-inf) dB/g),integrated=last(/I:\s+(-?[\d.]+|-inf) LUFS/g),integratedLUFS=integrated!==null&&integrated> -69.9?integrated:null,loudnessRangeLU=last(/LRA:\s+([\d.]+) LU/g),truePeakDbFS=last(/Peak:\s+(-?[\d.]+|-inf) dBFS/g);
+ let suggestedOperation=null,suggestionReason=null;
+ if(args.targetLUFS!==undefined){if(integratedLUFS===null)suggestionReason='No reliable gated integrated loudness (silence or insufficient program).';else{const gainDb=Math.round(((item.audio?.gainDb||0)+args.targetLUFS-integratedLUFS)*100)/100;if(gainDb< -60||gainDb>24)suggestionReason='Required gain exceeds the supported range.';else suggestedOperation={type:'item_audio',sequenceId:sequence.id,itemId:item.id,values:{gainDb}};}}
+ return {projectId:project.projectId,revision:project.revision,sequenceId:sequence.id,itemId:item.id,duration:timeSeconds(item.duration),meanDbFS,peakDbFS,truePeakDbFS,integratedLUFS,loudnessRangeLU,targetLUFS:args.targetLUFS??null,suggestedOperation,suggestionReason,scope:'Isolated item after clip processing/fades; excludes linked dissolve fades, track/master mix, mute/solo and other items. Gain suggestion is an estimate requiring plan/preview, not a broadcast normalization guarantee.'};
+}

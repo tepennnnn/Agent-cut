@@ -1,0 +1,13 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs/promises';import path from 'node:path';import {fileURLToPath} from 'node:url';
+import {parseSubtitles,exportSubtitles} from './subtitles.mjs';import {Store,canonical} from './engine.mjs';import {convertV1} from './sequences.mjs';
+const fixture=()=>({title:'Subtitles',canvas:{width:320,height:180,fps:30},assets:[{id:'a',name:'A',file:'a.mp4',duration:10,width:320,height:180,hasAudio:true}],clips:[{id:'c',assetId:'a',sourceIn:0,sourceOut:10,speed:1,volume:1}],captions:[]});
+test('plain VTT/SRT parse and export preserve cue timing, Unicode and line breaks',()=>{
+ const vtt='WEBVTT\n\nNOTE local note\n\nopening\n00:00.500 --> 00:01.250\nHello 世界\nSecond line\n\n00:00:02.000 --> 00:00:03.000\nNext',cues=parseSubtitles(vtt,'vtt');assert.equal(cues.length,2);assert.equal(cues[0].start,.5);assert.equal(cues[0].end,1.25);assert.equal(cues[0].text,'Hello 世界\nSecond line');
+ const p={...fixture(),captions:cues.map((c,i)=>({...c,id:String(i)}))};for(const format of ['srt','vtt'])assert.deepEqual(parseSubtitles(exportSubtitles(p,format).text,format),cues);assert.deepEqual(parseSubtitles(exportSubtitles(convertV1(p),'vtt').text,'vtt'),cues);
+ for(const text of ['WEBVTT\n\n00:00.000 --> 00:01.000 align:start\nUnsupported','WEBVTT\n\n00:61.000 --> 00:62.000\nBad','WEBVTT\n\n00:01.000 --> 00:00.000\nBad','WEBVTT\n\nSTYLE\n::cue { color: red }','WEBVTT'])assert.throws(()=>parseSubtitles(text,'vtt'));assert.throws(()=>parseSubtitles('x'.repeat(500001)));assert.throws(()=>exportSubtitles(p,'ass'));
+});
+test('VTT import is one persisted reversible mutation and failed cue batches are atomic',async()=>{
+ const root=path.dirname(fileURLToPath(import.meta.url)),work=path.resolve(root,'../../work/subtitle-tests');await fs.mkdir(work,{recursive:true});const dir=await fs.mkdtemp(path.join(work,'run-')),s=new Store(dir,'unused'),p=convertV1(fixture());await s.init();await s.commit(p,'Fixture');const before=canonical(s.db.project),revision=s.db.revision;
+ await s.importSubtitles({expectedRevision:revision,expectedProjectId:s.projectId,format:'vtt',text:'WEBVTT\n\n00:00.500 --> 00:01.250\nOpening'});assert.equal(s.db.revision,revision+1);assert.equal(s.db.project.sequences[0].captions.length,1);const after=canonical(s.db.project);await s.undo({expectedRevision:s.db.revision});assert.equal(canonical(s.db.project),before);await s.redo({expectedRevision:s.db.revision});assert.equal(canonical(s.db.project),after);
+ await assert.rejects(s.importSubtitles({expectedRevision:s.db.revision,format:'vtt',text:'WEBVTT\n\n00:09.000 --> 00:11.000\nPast end'}));assert.equal(canonical(s.db.project),after);
+});

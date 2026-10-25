@@ -1,0 +1,11 @@
+import fs from 'node:fs/promises';import path from 'node:path';import {createHash,randomUUID} from 'node:crypto';import {EditError} from './engine.mjs';
+const sha=b=>createHash('sha256').update(b).digest('hex');
+export async function recoverLock(store,args){store.checkIdentity(args.expectedProjectId);const lock=path.join(store.root,'project.lock'),guard=path.join(store.root,'project-recovery.lock'),stat=await fs.lstat(lock).catch(()=>null);if(!stat)return {locked:false,recoveryRequired:false};if(!stat.isFile()||stat.isSymbolicLink()||stat.size>4096)throw new EditError('UNSAFE_LOCK','Lock metadata is not a small regular file.');
+ const raw=await fs.readFile(lock),owner=JSON.parse(raw.toString()),project=await fs.readFile(store.file),db=JSON.parse(project.toString());let dead=false;if(!Number.isSafeInteger(owner.pid)||owner.pid<=0)throw new EditError('OWNERSHIP_UNKNOWN','Lock owner is not verifiable.');try{process.kill(owner.pid,0);}catch(e){dead=e.code==='ESRCH';}const planId=sha(Buffer.concat([raw,project]));
+ if(args.action!=='recover')return {locked:true,ownerPid:owner.pid,ownerVerifiedDead:dead,revision:db.revision,planId,recoveryRequired:true};
+ if(!dead)throw new EditError('OWNERSHIP_UNKNOWN','A live or unverifiable owner lock cannot be recovered.');if(args.expectedRevision!==db.revision||args.confirmPlanId!==planId)throw new EditError('STALE_RECOVERY','Review the current lock/project recovery plan first.');
+ const handle=await fs.open(guard,'wx').catch(()=>{throw new EditError('PROJECT_BUSY','Another recovery is in progress.');});try{
+  const backup=path.join(store.root,'backups','lock-recovery-'+randomUUID()+'.json');await fs.mkdir(path.dirname(backup),{recursive:true});await fs.writeFile(backup,project,{flag:'wx'});if(sha(await fs.readFile(lock))!==sha(raw)||sha(await fs.readFile(store.file))!==sha(project))throw new EditError('STALE_RECOVERY','Lock or project changed during recovery.');try{process.kill(owner.pid,0);throw new EditError('OWNERSHIP_UNKNOWN','Lock PID became live; recovery canceled.');}catch(e){if(e.code!=='ESRCH')throw e;}
+  await fs.rename(lock,path.join(store.root,'backups','abandoned-lock-'+randomUUID()+'.json'));store.recoveryMode=false;return {recovered:true,backup,revision:db.revision,projectUnchanged:true};
+ }finally{await handle.close();await fs.unlink(guard);}
+}

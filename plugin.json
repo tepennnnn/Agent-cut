@@ -1,0 +1,18 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "agent-cut",
+  "version": "0.2.0",
+  "description": "Local agentic video editing: timeline, overlays, color, transitions, audio, subtitles and export.",
+  "extensions": {
+    "com.openai": {
+      "requires_local_executor": true,
+      "interface": {
+        "displayName": "Agent Cut",
+        "shortDescription": "Edit local video with Codex",
+        "longDescription": "Codex controls a local video timeline through editing tools. Media and rendering stay on the computer.",
+        "capabilities": [],
+        "defaultPrompt": "Use Agent Cut to inspect my local video project, apply my edits and show a composed preview."
+      }
+    }
+  }
+}

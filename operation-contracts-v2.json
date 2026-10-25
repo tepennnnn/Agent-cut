@@ -1,0 +1,2934 @@
+{
+  "bin_add": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "bin_add"
+        },
+        "name": {
+          "type": "string",
+          "description": "Bin name"
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "bin_update": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "bin_update"
+        },
+        "binId": {
+          "type": "string",
+          "description": "Bin ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "Bin name"
+        }
+      },
+      "required": [
+        "type",
+        "binId",
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "bin_delete": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "bin_delete"
+        },
+        "binId": {
+          "type": "string",
+          "description": "Bin ID"
+        }
+      },
+      "required": [
+        "type",
+        "binId"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": true
+  },
+  "asset_update": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "asset_update"
+        },
+        "assetId": {
+          "type": "string",
+          "description": "Asset ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name"
+        },
+        "binId": {
+          "type": "string",
+          "description": "Bin ID, empty clears bin"
+        },
+        "label": {
+          "enum": [
+            "none",
+            "red",
+            "orange",
+            "yellow",
+            "green",
+            "blue",
+            "purple"
+          ]
+        },
+        "notes": {
+          "type": "string",
+          "description": "Up to 2000 literal characters"
+        },
+        "tags": {
+          "type": "array",
+          "maxItems": 20,
+          "items": {
+            "type": "string",
+            "description": "Literal tag up to 40 characters"
+          }
+        }
+      },
+      "required": [
+        "type",
+        "assetId"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "item_attributes": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "item_attributes"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "sourceItemId": {
+          "type": "string",
+          "description": "Source item ID"
+        },
+        "targetItemIds": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 200,
+          "items": {
+            "type": "string",
+            "description": "Target item ID"
+          }
+        },
+        "properties": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 6,
+          "items": {
+            "enum": [
+              "effects",
+              "keyframes",
+              "audio",
+              "mask",
+              "blendMode",
+              "volume"
+            ]
+          }
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "sourceItemId",
+        "targetItemIds",
+        "properties"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": true
+  },
+  "item_group": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "item_group"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "itemIds": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 200,
+          "items": {
+            "type": "string",
+            "description": "Item ID"
+          }
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "itemIds"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "item_ungroup": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "item_ungroup"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "itemId": {
+          "type": "string",
+          "description": "Grouped item ID"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "itemId"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "track_ducking": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "track_ducking"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "trackId": {
+          "type": "string",
+          "description": "Target audio track ID"
+        },
+        "sidechainTrackId": {
+          "type": "string",
+          "description": "Control audio track; omit to clear ducking"
+        },
+        "thresholdDb": {
+          "type": "number",
+          "description": "Threshold -60 to 0 dB; default -30"
+        },
+        "ratio": {
+          "type": "number",
+          "description": "1–20; default 4"
+        },
+        "attackMs": {
+          "type": "number",
+          "description": "0.01–2000; default 20"
+        },
+        "releaseMs": {
+          "type": "number",
+          "description": "0.01–9000; default 250"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "trackId"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "item_audio_preset": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "item_audio_preset"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "itemId": {
+          "type": "string",
+          "description": "Audio item ID"
+        },
+        "preset": {
+          "enum": [
+            "neutral",
+            "dialogue",
+            "music",
+            "sfx",
+            "ambience"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "itemId",
+        "preset"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "item_audio": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "item_audio"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "itemId": {
+          "type": "string",
+          "description": "Audio item ID"
+        },
+        "values": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "gainDb": {
+              "type": "number",
+              "description": "gainDb"
+            },
+            "pan": {
+              "type": "number",
+              "description": "pan"
+            },
+            "highpassHz": {
+              "type": "number",
+              "description": "highpassHz"
+            },
+            "lowpassHz": {
+              "type": "number",
+              "description": "lowpassHz"
+            },
+            "lowEqDb": {
+              "type": "number",
+              "description": "lowEqDb"
+            },
+            "midEqDb": {
+              "type": "number",
+              "description": "midEqDb"
+            },
+            "highEqDb": {
+              "type": "number",
+              "description": "highEqDb"
+            },
+            "noiseReductionDb": {
+              "type": "number",
+              "description": "noiseReductionDb"
+            },
+            "deess": {
+              "type": "number",
+              "description": "deess"
+            },
+            "limiterDb": {
+              "type": "number",
+              "description": "limiterDb"
+            },
+            "channel": {
+              "enum": [
+                "stereo",
+                "left",
+                "right",
+                "mono"
+              ]
+            },
+            "humHz": {
+              "enum": [
+                0,
+                50,
+                60
+              ]
+            },
+            "compressor": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "thresholdDb": {
+                  "type": "number",
+                  "description": "thresholdDb"
+                },
+                "ratio": {
+                  "type": "number",
+                  "description": "ratio"
+                },
+                "attackMs": {
+                  "type": "number",
+                  "description": "attackMs"
+                },
+                "releaseMs": {
+                  "type": "number",
+                  "description": "releaseMs"
+                },
+                "makeupDb": {
+                  "type": "number",
+                  "description": "makeupDb"
+                }
+              }
+            }
+          }
+        },
+        "replace": {
+          "type": "boolean",
+          "description": "Replace processors rather than merge"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "itemId",
+        "values"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "track_audio": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "track_audio"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "trackId": {
+          "type": "string",
+          "description": "Audio track ID"
+        },
+        "values": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "gainDb": {
+              "type": "number",
+              "description": "gainDb"
+            },
+            "pan": {
+              "type": "number",
+              "description": "pan"
+            },
+            "highpassHz": {
+              "type": "number",
+              "description": "highpassHz"
+            },
+            "lowpassHz": {
+              "type": "number",
+              "description": "lowpassHz"
+            },
+            "lowEqDb": {
+              "type": "number",
+              "description": "lowEqDb"
+            },
+            "midEqDb": {
+              "type": "number",
+              "description": "midEqDb"
+            },
+            "highEqDb": {
+              "type": "number",
+              "description": "highEqDb"
+            },
+            "noiseReductionDb": {
+              "type": "number",
+              "description": "noiseReductionDb"
+            },
+            "deess": {
+              "type": "number",
+              "description": "deess"
+            },
+            "limiterDb": {
+              "type": "number",
+              "description": "limiterDb"
+            },
+            "channel": {
+              "enum": [
+                "stereo",
+                "left",
+                "right",
+                "mono"
+              ]
+            },
+            "humHz": {
+              "enum": [
+                0,
+                50,
+                60
+              ]
+            },
+            "compressor": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "thresholdDb": {
+                  "type": "number",
+                  "description": "thresholdDb"
+                },
+                "ratio": {
+                  "type": "number",
+                  "description": "ratio"
+                },
+                "attackMs": {
+                  "type": "number",
+                  "description": "attackMs"
+                },
+                "releaseMs": {
+                  "type": "number",
+                  "description": "releaseMs"
+                },
+                "makeupDb": {
+                  "type": "number",
+                  "description": "makeupDb"
+                }
+              }
+            }
+          }
+        },
+        "replace": {
+          "type": "boolean",
+          "description": "Replace processors rather than merge"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "trackId",
+        "values"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "adjustment_layer_add": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "adjustment_layer_add"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "Layer name"
+        },
+        "start": {
+          "type": "number",
+          "description": "Inclusive sequence seconds"
+        },
+        "end": {
+          "type": "number",
+          "description": "Exclusive sequence seconds"
+        },
+        "values": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "brightness": {
+              "type": "number",
+              "description": "Correction brightness"
+            },
+            "contrast": {
+              "type": "number",
+              "description": "Correction contrast"
+            },
+            "saturation": {
+              "type": "number",
+              "description": "Correction saturation"
+            }
+          }
+        },
+        "index": {
+          "type": "integer",
+          "description": "Bottom-to-top track insertion index; default top"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "name",
+        "start",
+        "end",
+        "values"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "adjustment_update": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "adjustment_update"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "trackId": {
+          "type": "string",
+          "description": "Video track ID"
+        },
+        "adjustmentId": {
+          "type": "string",
+          "description": "Span ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "Span name"
+        },
+        "start": {
+          "type": "number",
+          "description": "Inclusive sequence seconds"
+        },
+        "end": {
+          "type": "number",
+          "description": "Exclusive sequence seconds"
+        },
+        "values": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "brightness": {
+              "type": "number",
+              "description": "Correction brightness"
+            },
+            "contrast": {
+              "type": "number",
+              "description": "Correction contrast"
+            },
+            "saturation": {
+              "type": "number",
+              "description": "Correction saturation"
+            }
+          }
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "trackId",
+        "adjustmentId"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "adjustment_delete": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "adjustment_delete"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "trackId": {
+          "type": "string",
+          "description": "Video track ID"
+        },
+        "adjustmentId": {
+          "type": "string",
+          "description": "Span ID"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "trackId",
+        "adjustmentId"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": true
+  },
+  "item_mask": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "item_mask"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "itemId": {
+          "type": "string",
+          "description": "Video item ID"
+        },
+        "mask": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "shape"
+          ],
+          "properties": {
+            "shape": {
+              "enum": [
+                "rectangle",
+                "ellipse"
+              ]
+            },
+            "x": {
+              "type": "number",
+              "description": "Normalized source x"
+            },
+            "y": {
+              "type": "number",
+              "description": "Normalized source y"
+            },
+            "width": {
+              "type": "number",
+              "description": "Normalized source width"
+            },
+            "height": {
+              "type": "number",
+              "description": "Normalized source height"
+            },
+            "feather": {
+              "type": "number",
+              "description": "Normalized source feather"
+            },
+            "opacity": {
+              "type": "number",
+              "description": "Normalized source opacity"
+            },
+            "inverted": {
+              "type": "boolean",
+              "description": "Keep outside the shape instead"
+            }
+          }
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "itemId",
+        "mask"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "item_mask_clear": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "item_mask_clear"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "itemId": {
+          "type": "string",
+          "description": "Video item ID"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "itemId"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "item_blend": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "item_blend"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "itemId": {
+          "type": "string",
+          "description": "Video item ID"
+        },
+        "mode": {
+          "enum": [
+            "normal",
+            "multiply",
+            "screen",
+            "darken",
+            "lighten",
+            "difference",
+            "addition"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "itemId",
+        "mode"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "item_keyframes": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "item_keyframes"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "itemId": {
+          "type": "string",
+          "description": "Item ID"
+        },
+        "property": {
+          "enum": [
+            "brightness",
+            "contrast",
+            "saturation",
+            "rotation",
+            "offsetX",
+            "offsetY",
+            "opacity",
+            "volume"
+          ]
+        },
+        "frames": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "time",
+              "value"
+            ],
+            "properties": {
+              "time": {
+                "type": "number",
+                "description": "Clip-local playback seconds"
+              },
+              "value": {
+                "type": "number",
+                "description": "Absolute animated value"
+              },
+              "interpolation": {
+                "enum": [
+                  "linear",
+                  "hold",
+                  "ease_in",
+                  "ease_out",
+                  "ease_in_out",
+                  "bezier"
+                ]
+              },
+              "control1": {
+                "type": "number",
+                "description": "Bezier value control 0-1; required only for bezier"
+              },
+              "control2": {
+                "type": "number",
+                "description": "Bezier value control 0-1; required only for bezier"
+              }
+            }
+          }
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "itemId",
+        "property",
+        "frames"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "item_keyframes_clear": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "item_keyframes_clear"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "itemId": {
+          "type": "string",
+          "description": "Item ID"
+        },
+        "property": {
+          "enum": [
+            "brightness",
+            "contrast",
+            "saturation",
+            "rotation",
+            "offsetX",
+            "offsetY",
+            "opacity",
+            "volume"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "itemId"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "project_rename": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "project_rename"
+        },
+        "title": {
+          "type": "string",
+          "description": "Project title"
+        }
+      },
+      "required": [
+        "type",
+        "title"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "sequence_settings": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "sequence_settings"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "Sequence name"
+        },
+        "width": {
+          "type": "integer",
+          "description": "Even canvas width 160–3840"
+        },
+        "height": {
+          "type": "integer",
+          "description": "Even canvas height 160–2160"
+        },
+        "fpsNumerator": {
+          "type": "integer",
+          "description": "Frame rate numerator"
+        },
+        "fpsDenominator": {
+          "type": "integer",
+          "description": "Frame rate denominator"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "track_reorder": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "track_reorder"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "trackId": {
+          "type": "string",
+          "description": "Track ID"
+        },
+        "index": {
+          "type": "integer",
+          "description": "Bottom-to-top destination index"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "trackId",
+        "index"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "sequence_insert_gap": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "sequence_insert_gap"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "time": {
+          "type": "number",
+          "description": "Sequence insertion time"
+        },
+        "duration": {
+          "type": "number",
+          "description": "Gap duration"
+        },
+        "trackIds": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "items": {
+            "type": "string",
+            "description": "Also insert on these destination tracks"
+          }
+        },
+        "captionPolicy": {
+          "enum": [
+            "retain",
+            "retime",
+            "regenerate_draft"
+          ]
+        },
+        "graphicPolicy": {
+          "enum": [
+            "retain",
+            "retime"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "time",
+        "duration"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "sequence_razor": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "sequence_razor"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "time": {
+          "type": "number",
+          "description": "Absolute cut time"
+        },
+        "targetedOnly": {
+          "type": "boolean",
+          "description": "Only targeted tracks plus linked partners, default true"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "time"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "item_roll": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "item_roll"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "itemId": {
+          "type": "string",
+          "description": "Left item ID"
+        },
+        "delta": {
+          "type": "number",
+          "description": "Signed sequence seconds"
+        },
+        "linked": {
+          "type": "boolean",
+          "description": "Include linked media, default true"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "itemId",
+        "delta"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "item_slide": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "item_slide"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "itemId": {
+          "type": "string",
+          "description": "Middle item ID"
+        },
+        "delta": {
+          "type": "number",
+          "description": "Signed sequence seconds"
+        },
+        "linked": {
+          "type": "boolean",
+          "description": "Include linked media, default true"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "itemId",
+        "delta"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "item_trim": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "item_trim"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "itemId": {
+          "type": "string",
+          "description": "Item ID"
+        },
+        "sourceIn": {
+          "type": "number",
+          "description": "New source in"
+        },
+        "sourceOut": {
+          "type": "number",
+          "description": "New source out"
+        },
+        "linked": {
+          "type": "boolean",
+          "description": "Include linked media, default true"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "itemId",
+        "sourceIn",
+        "sourceOut"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "item_split": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "item_split"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "itemId": {
+          "type": "string",
+          "description": "Item ID"
+        },
+        "time": {
+          "type": "number",
+          "description": "Absolute sequence cut time"
+        },
+        "linked": {
+          "type": "boolean",
+          "description": "Include linked media, default true"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "itemId",
+        "time"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "item_slip": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "item_slip"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "itemId": {
+          "type": "string",
+          "description": "Item ID"
+        },
+        "delta": {
+          "type": "number",
+          "description": "Signed source seconds"
+        },
+        "linked": {
+          "type": "boolean",
+          "description": "Include linked media, default true"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "itemId",
+        "delta"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "item_rate": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "item_rate"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "itemId": {
+          "type": "string",
+          "description": "Item ID"
+        },
+        "duration": {
+          "type": "number",
+          "description": "New timeline duration; preserve source range"
+        },
+        "linked": {
+          "type": "boolean",
+          "description": "Include linked media, default true"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "itemId",
+        "duration"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "item_freeze": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "item_freeze"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "itemId": {
+          "type": "string",
+          "description": "Video item ID"
+        },
+        "sourceTime": {
+          "type": "number",
+          "description": "Hold first decoded frame at or after source seconds; retain timeline duration and audio"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "itemId",
+        "sourceTime"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "item_freeze_clear": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "item_freeze_clear"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "itemId": {
+          "type": "string",
+          "description": "Video item ID"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "itemId"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "item_speed_curve": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "item_speed_curve"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "itemId": {
+          "type": "string",
+          "description": "Item ID"
+        },
+        "points": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 32,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "time",
+              "speed"
+            ],
+            "properties": {
+              "time": {
+                "type": "number",
+                "description": "Playback seconds; start at zero"
+              },
+              "speed": {
+                "type": "number",
+                "description": "Continuous linear speed 0.25–4"
+              }
+            }
+          }
+        },
+        "linked": {
+          "type": "boolean",
+          "description": "Include linked media, default true; audio pitch follows speed"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "itemId",
+        "points"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "item_speed_curve_clear": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "item_speed_curve_clear"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "itemId": {
+          "type": "string",
+          "description": "Item ID"
+        },
+        "linked": {
+          "type": "boolean",
+          "description": "Include linked media, default true; restore constant speed 1"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "itemId"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "item_reverse": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "item_reverse"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "itemId": {
+          "type": "string",
+          "description": "Item ID"
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "Reverse retained source range; false restores forward playback"
+        },
+        "linked": {
+          "type": "boolean",
+          "description": "Include linked media, default true"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "itemId",
+        "enabled"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "sequence_nest_selection": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "sequence_nest_selection"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Parent sequence ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "New source sequence name"
+        },
+        "itemIds": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 200,
+          "items": {
+            "type": "string",
+            "description": "Selected item ID; includes linked/grouped media"
+          }
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "name",
+        "itemIds"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": true
+  },
+  "sequence_unnest": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "sequence_unnest"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Original parent sequence ID"
+        },
+        "itemId": {
+          "type": "string",
+          "description": "Selection nest video item ID; expand full unprocessed linked wrappers into original tracks"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "itemId"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": true
+  },
+  "sequence_nest": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "sequence_nest"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Parent sequence ID"
+        },
+        "sourceSequenceId": {
+          "type": "string",
+          "description": "Nested source sequence ID"
+        },
+        "trackId": {
+          "type": "string",
+          "description": "Destination video track ID"
+        },
+        "time": {
+          "type": "number",
+          "description": "Parent timeline start seconds"
+        },
+        "includeAudio": {
+          "type": "boolean",
+          "description": "Create linked nested audio, default true"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "sourceSequenceId",
+        "trackId",
+        "time"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "asset_remove": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "asset_remove"
+        },
+        "assetId": {
+          "type": "string",
+          "description": "Unreferenced library asset ID; managed files remain for undo"
+        }
+      },
+      "required": [
+        "type",
+        "assetId"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": true
+  },
+  "item_effects": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "item_effects"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "itemId": {
+          "type": "string",
+          "description": "Item ID"
+        },
+        "values": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "brightness": {
+              "type": "number",
+              "description": "brightness"
+            },
+            "contrast": {
+              "type": "number",
+              "description": "contrast"
+            },
+            "saturation": {
+              "type": "number",
+              "description": "saturation"
+            },
+            "scale": {
+              "type": "number",
+              "description": "scale"
+            },
+            "rotation": {
+              "type": "number",
+              "description": "rotation"
+            },
+            "offsetX": {
+              "type": "number",
+              "description": "offsetX"
+            },
+            "offsetY": {
+              "type": "number",
+              "description": "offsetY"
+            },
+            "cropLeft": {
+              "type": "number",
+              "description": "cropLeft"
+            },
+            "cropRight": {
+              "type": "number",
+              "description": "cropRight"
+            },
+            "cropTop": {
+              "type": "number",
+              "description": "cropTop"
+            },
+            "cropBottom": {
+              "type": "number",
+              "description": "cropBottom"
+            },
+            "fadeIn": {
+              "type": "number",
+              "description": "fadeIn"
+            },
+            "fadeOut": {
+              "type": "number",
+              "description": "fadeOut"
+            },
+            "audioFadeIn": {
+              "type": "number",
+              "description": "audioFadeIn"
+            },
+            "audioFadeOut": {
+              "type": "number",
+              "description": "audioFadeOut"
+            },
+            "opacity": {
+              "type": "number",
+              "description": "opacity"
+            },
+            "flipH": {
+              "type": "boolean",
+              "description": "flipH"
+            },
+            "flipV": {
+              "type": "boolean",
+              "description": "flipV"
+            }
+          }
+        },
+        "linked": {
+          "type": "boolean",
+          "description": "Include linked media, default false"
+        },
+        "replace": {
+          "type": "boolean",
+          "description": "Replace rather than merge effects, default false"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "itemId",
+        "values"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "item_volume": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "item_volume"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "itemId": {
+          "type": "string",
+          "description": "Item ID"
+        },
+        "volume": {
+          "type": "number",
+          "description": "Linear volume 0–2"
+        },
+        "linked": {
+          "type": "boolean",
+          "description": "Include linked media, default true"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "itemId",
+        "volume"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "sequence_remove_range": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "sequence_remove_range"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "start": {
+          "type": "number",
+          "description": "Inclusive sequence seconds"
+        },
+        "end": {
+          "type": "number",
+          "description": "Exclusive sequence seconds"
+        },
+        "ripple": {
+          "type": "boolean",
+          "description": "Close gap on sync-locked or targeted tracks, default true"
+        },
+        "trackIds": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "items": {
+            "type": "string",
+            "description": "Explicit affected track ID"
+          }
+        },
+        "captionPolicy": {
+          "enum": [
+            "retain",
+            "retime",
+            "regenerate_draft"
+          ]
+        },
+        "graphicPolicy": {
+          "enum": [
+            "retain",
+            "retime"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "start",
+        "end"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": true
+  },
+  "sequence_caption": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "sequence_caption"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "text": {
+          "type": "string",
+          "description": "Literal caption text"
+        },
+        "start": {
+          "type": "number",
+          "description": "Start seconds"
+        },
+        "end": {
+          "type": "number",
+          "description": "End seconds"
+        },
+        "captionId": {
+          "type": "string",
+          "description": "Existing caption ID to update"
+        },
+        "style": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "font": {
+              "enum": [
+                "sans",
+                "sans-bold",
+                "serif"
+              ]
+            },
+            "fontSha256": {
+              "type": "string"
+            },
+            "size": {
+              "type": "number"
+            },
+            "x": {
+              "type": "number"
+            },
+            "y": {
+              "type": "number"
+            },
+            "width": {
+              "type": "number"
+            },
+            "safeMargin": {
+              "type": "number"
+            },
+            "padding": {
+              "type": "number"
+            },
+            "color": {
+              "type": "string"
+            },
+            "background": {
+              "type": "string"
+            },
+            "align": {
+              "enum": [
+                "left",
+                "center",
+                "right"
+              ]
+            }
+          }
+        },
+        "clearStyle": {
+          "type": "boolean",
+          "description": "Reset cue override"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "text",
+        "start",
+        "end"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "sequence_caption_delete": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "sequence_caption_delete"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "captionId": {
+          "type": "string",
+          "description": "Caption ID"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "captionId"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": true
+  },
+  "sequence_marker": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "sequence_marker"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "time": {
+          "type": "number",
+          "description": "Sequence seconds"
+        },
+        "label": {
+          "type": "string",
+          "description": "Marker label"
+        },
+        "markerId": {
+          "type": "string",
+          "description": "Existing marker ID to update"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "time",
+        "label"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "sequence_marker_delete": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "sequence_marker_delete"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "markerId": {
+          "type": "string",
+          "description": "Marker ID"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "markerId"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": true
+  },
+  "sequence_range": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "sequence_range"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "start": {
+          "type": "number",
+          "description": "Export start seconds"
+        },
+        "end": {
+          "type": "number",
+          "description": "Export end seconds"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "start",
+        "end"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "sequence_range_clear": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "sequence_range_clear"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "sequence_transition": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "sequence_transition"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "itemId": {
+          "type": "string",
+          "description": "Outgoing video item ID"
+        },
+        "seconds": {
+          "type": "number",
+          "description": "Overlap transition duration 0–2; zero removes"
+        },
+        "kind": {
+          "enum": [
+            "cross_dissolve",
+            "dip_black",
+            "dip_white",
+            "wipe_left_to_right",
+            "wipe_right_to_left",
+            "wipe_top_to_bottom",
+            "wipe_bottom_to_top"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "itemId",
+        "seconds"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "item_add": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "item_add"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "trackId": {
+          "type": "string",
+          "description": "Destination video/audio track"
+        },
+        "assetId": {
+          "type": "string",
+          "description": "Imported asset ID"
+        },
+        "time": {
+          "type": "number",
+          "description": "Timeline start seconds"
+        },
+        "sourceIn": {
+          "type": "number",
+          "description": "Source in, default 0"
+        },
+        "sourceOut": {
+          "type": "number",
+          "description": "Source out, default asset duration"
+        },
+        "timelineOut": {
+          "type": "number",
+          "description": "Three-point edit: derive source out from this exclusive sequence end; omit sourceOut"
+        },
+        "speed": {
+          "type": "number",
+          "description": "Constant speed 0.25–4; default 1"
+        },
+        "volume": {
+          "type": "number",
+          "description": "Audio volume 0–2; default 1"
+        },
+        "mode": {
+          "enum": [
+            "place",
+            "insert",
+            "overwrite"
+          ]
+        },
+        "includeAudio": {
+          "type": "boolean",
+          "description": "For video, create linked audio when available; default true"
+        },
+        "audioTrackId": {
+          "type": "string",
+          "description": "Optional existing linked-audio destination; otherwise create an audio track"
+        },
+        "captionPolicy": {
+          "enum": [
+            "retain",
+            "retime",
+            "regenerate_draft"
+          ]
+        },
+        "graphicPolicy": {
+          "enum": [
+            "retain",
+            "retime"
+          ]
+        },
+        "newId": {
+          "type": "string",
+          "description": "Optional unique lowercase SHA256 ID for dependent operations in a single plan"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "trackId",
+        "assetId",
+        "time"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false,
+    "destructiveWhen": {
+      "mode": "overwrite"
+    }
+  },
+  "sequence_create": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "sequence_create"
+        },
+        "name": {
+          "type": "string",
+          "description": "Sequence name"
+        },
+        "newId": {
+          "type": "string",
+          "description": "Optional unique lowercase SHA256 ID for dependent operations in a single plan"
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "sequence_select": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "sequence_select"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "sequence_clear": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "sequence_clear"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": true
+  },
+  "track_add": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "track_add"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "kind": {
+          "enum": [
+            "video",
+            "audio"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "Track name"
+        },
+        "index": {
+          "type": "integer",
+          "description": "Optional bottom-to-top insertion index"
+        },
+        "newId": {
+          "type": "string",
+          "description": "Optional unique lowercase SHA256 ID for dependent operations in a single plan"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "kind",
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "track_update": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "track_update"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "trackId": {
+          "type": "string",
+          "description": "Track ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "Track name"
+        },
+        "locked": {
+          "type": "boolean",
+          "description": "Prevent content edits"
+        },
+        "muted": {
+          "type": "boolean",
+          "description": "Mute contribution"
+        },
+        "solo": {
+          "type": "boolean",
+          "description": "Solo within media kind"
+        },
+        "targeted": {
+          "type": "boolean",
+          "description": "Target for future edits"
+        },
+        "syncLocked": {
+          "type": "boolean",
+          "description": "Participate in future ripple edits"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "trackId"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "track_delete": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "track_delete"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "trackId": {
+          "type": "string",
+          "description": "Track ID"
+        },
+        "allowNonEmpty": {
+          "type": "boolean",
+          "description": "Explicitly allow deleting populated track; default false"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "trackId"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": true
+  },
+  "item_move": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "item_move"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "itemId": {
+          "type": "string",
+          "description": "Item ID"
+        },
+        "time": {
+          "type": "number",
+          "description": "New timeline start seconds"
+        },
+        "trackId": {
+          "type": "string",
+          "description": "Optional destination track of matching media kind"
+        },
+        "linked": {
+          "type": "boolean",
+          "description": "Move linked items together; default true"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "itemId",
+        "time"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "item_lift": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "item_lift"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "itemId": {
+          "type": "string",
+          "description": "Item ID"
+        },
+        "linked": {
+          "type": "boolean",
+          "description": "Remove linked items together; default true"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "itemId"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": true
+  },
+  "adjustment_keyframes": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "adjustment_keyframes"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "trackId": {
+          "type": "string",
+          "description": "Video track ID"
+        },
+        "adjustmentId": {
+          "type": "string",
+          "description": "Span ID"
+        },
+        "property": {
+          "enum": [
+            "brightness",
+            "contrast",
+            "saturation"
+          ]
+        },
+        "frames": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "time",
+              "value"
+            ],
+            "properties": {
+              "time": {
+                "type": "number",
+                "description": "Clip-local playback seconds"
+              },
+              "value": {
+                "type": "number",
+                "description": "Absolute animated value"
+              },
+              "interpolation": {
+                "enum": [
+                  "linear",
+                  "hold",
+                  "ease_in",
+                  "ease_out",
+                  "ease_in_out",
+                  "bezier"
+                ]
+              },
+              "control1": {
+                "type": "number",
+                "description": "Bezier value control 0-1; required only for bezier"
+              },
+              "control2": {
+                "type": "number",
+                "description": "Bezier value control 0-1; required only for bezier"
+              }
+            }
+          }
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "trackId",
+        "adjustmentId",
+        "property",
+        "frames"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "adjustment_keyframes_clear": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "adjustment_keyframes_clear"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "trackId": {
+          "type": "string",
+          "description": "Video track ID"
+        },
+        "adjustmentId": {
+          "type": "string",
+          "description": "Span ID"
+        },
+        "property": {
+          "enum": [
+            "brightness",
+            "contrast",
+            "saturation"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "trackId",
+        "adjustmentId"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "items_duplicate": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "items_duplicate"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "itemIds": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 200,
+          "items": {
+            "type": "string",
+            "description": "Selected item ID"
+          }
+        },
+        "time": {
+          "type": "number",
+          "description": "Paste start, timeline seconds"
+        },
+        "sourceDigest": {
+          "type": "string",
+          "description": "Optional copied selection SHA-256; rejects changed source"
+        },
+        "includeCaptions": {
+          "type": "boolean",
+          "description": "Copy fully contained captions; crossing cues reject; default false"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "itemIds",
+        "time"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "items_move": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "items_move"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "itemIds": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 200,
+          "items": {
+            "type": "string",
+            "description": "Selected item ID"
+          }
+        },
+        "delta": {
+          "type": "number",
+          "description": "Timeline offset seconds"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "itemIds",
+        "delta"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "items_lift": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "items_lift"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "itemIds": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 200,
+          "items": {
+            "type": "string",
+            "description": "Selected item ID"
+          }
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "itemIds"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": true
+  },
+  "sequence_caption_style": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "sequence_caption_style"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "values": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "font": {
+              "enum": [
+                "sans",
+                "sans-bold",
+                "serif"
+              ]
+            },
+            "fontSha256": {
+              "type": "string"
+            },
+            "size": {
+              "type": "number"
+            },
+            "x": {
+              "type": "number"
+            },
+            "y": {
+              "type": "number"
+            },
+            "width": {
+              "type": "number"
+            },
+            "safeMargin": {
+              "type": "number"
+            },
+            "padding": {
+              "type": "number"
+            },
+            "color": {
+              "type": "string"
+            },
+            "background": {
+              "type": "string"
+            },
+            "align": {
+              "enum": [
+                "left",
+                "center",
+                "right"
+              ]
+            }
+          }
+        },
+        "replace": {
+          "type": "boolean",
+          "description": "Replace defaults; empty resets"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "values"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "graphic_text": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "graphic_text"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "text": {
+          "type": "string",
+          "description": "Literal title, 1–1000 characters"
+        },
+        "start": {
+          "type": "number",
+          "description": "Timeline start seconds"
+        },
+        "end": {
+          "type": "number",
+          "description": "Timeline end seconds"
+        },
+        "graphicId": {
+          "type": "string",
+          "description": "Existing title ID"
+        },
+        "style": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "font": {
+              "enum": [
+                "sans",
+                "sans-bold",
+                "serif"
+              ]
+            },
+            "fontSha256": {
+              "type": "string"
+            },
+            "size": {
+              "type": "number"
+            },
+            "x": {
+              "type": "number"
+            },
+            "y": {
+              "type": "number"
+            },
+            "width": {
+              "type": "number"
+            },
+            "safeMargin": {
+              "type": "number"
+            },
+            "padding": {
+              "type": "number"
+            },
+            "color": {
+              "type": "string"
+            },
+            "background": {
+              "type": "string"
+            },
+            "align": {
+              "enum": [
+                "left",
+                "center",
+                "right"
+              ]
+            }
+          }
+        },
+        "clearStyle": {
+          "type": "boolean",
+          "description": "Reset title style"
+        },
+        "order": {
+          "type": "integer",
+          "description": "Bottom-to-top text stack index"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "text",
+        "start",
+        "end"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  },
+  "graphic_delete": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "graphic_delete"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "graphicId": {
+          "type": "string",
+          "description": "Title ID"
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "graphicId"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": true
+  },
+  "sequence_text_retime": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "sequence_text_retime"
+        },
+        "sequenceId": {
+          "type": "string",
+          "description": "Sequence ID"
+        },
+        "delta": {
+          "type": "number",
+          "description": "Selected text offset seconds"
+        },
+        "captionIds": {
+          "type": "array",
+          "maxItems": 500,
+          "items": {
+            "type": "string",
+            "description": "Cue ID"
+          }
+        },
+        "graphicIds": {
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "type": "string",
+            "description": "Title ID"
+          }
+        }
+      },
+      "required": [
+        "type",
+        "sequenceId",
+        "delta"
+      ],
+      "additionalProperties": false
+    },
+    "schemaVersion": 2,
+    "destructive": false
+  }
+}

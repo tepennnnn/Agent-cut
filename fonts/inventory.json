@@ -1,0 +1,147 @@
+{
+  "googleFontsCommit": "e7db6ca603fd4862010383ff17ffd6cc4ffac1c0",
+  "buildTool": "fontTools 4.60.1 (build-only; not a runtime dependency)",
+  "fonts": [
+    {
+      "id": "montserrat",
+      "family": "montserrat",
+      "filename": "Montserrat[wght].ttf",
+      "weight": 800,
+      "source": "https://raw.githubusercontent.com/google/fonts/e7db6ca603fd4862010383ff17ffd6cc4ffac1c0/ofl/montserrat/Montserrat%5Bwght%5D.ttf",
+      "sha256": "0f7b311b2f3279e4eef9b2f968bcdbab6e28f4daeb1f049f4f278a902bcd82f7",
+      "axes": {
+        "wght": 800
+      },
+      "bundledSha256": "d9c0669c50c09e346ca803952da40fa47f4552ee5ac31e4059d40ec23c32264f",
+      "bytes": 374648,
+      "license": "SIL Open Font License 1.1",
+      "modified": true
+    },
+    {
+      "id": "inter",
+      "family": "inter",
+      "filename": "Inter[opsz,wght].ttf",
+      "weight": 700,
+      "source": "https://raw.githubusercontent.com/google/fonts/e7db6ca603fd4862010383ff17ffd6cc4ffac1c0/ofl/inter/Inter%5Bopsz%2Cwght%5D.ttf",
+      "sha256": "29160a80ff49ddcab2c97711247e08b1fab27a484a329ce8b813d820dc559031",
+      "axes": {
+        "opsz": 14.0,
+        "wght": 700
+      },
+      "bundledSha256": "9078a870b76977771caba07064bf67686942c80465b432149ed97b019abab748",
+      "bytes": 343072,
+      "license": "SIL Open Font License 1.1",
+      "modified": true
+    },
+    {
+      "id": "poppins",
+      "family": "poppins",
+      "filename": "Poppins-Bold.ttf",
+      "weight": null,
+      "source": "https://raw.githubusercontent.com/google/fonts/e7db6ca603fd4862010383ff17ffd6cc4ffac1c0/ofl/poppins/Poppins-Bold.ttf",
+      "sha256": "983676516167748b74de6f4771fb384c664fd913acb8b471122ecacf5da5ea6c",
+      "axes": null,
+      "bundledSha256": "983676516167748b74de6f4771fb384c664fd913acb8b471122ecacf5da5ea6c",
+      "bytes": 155996,
+      "license": "SIL Open Font License 1.1",
+      "modified": false
+    },
+    {
+      "id": "anton",
+      "family": "anton",
+      "filename": "Anton-Regular.ttf",
+      "weight": null,
+      "source": "https://raw.githubusercontent.com/google/fonts/e7db6ca603fd4862010383ff17ffd6cc4ffac1c0/ofl/anton/Anton-Regular.ttf",
+      "sha256": "a4ba3a92350ebb031da0cb47630ac49eb265082ca1bc0450442f4a83ab947cab",
+      "axes": null,
+      "bundledSha256": "a4ba3a92350ebb031da0cb47630ac49eb265082ca1bc0450442f4a83ab947cab",
+      "bytes": 170812,
+      "license": "SIL Open Font License 1.1",
+      "modified": false
+    },
+    {
+      "id": "bebas-neue",
+      "family": "bebasneue",
+      "filename": "BebasNeue-Regular.ttf",
+      "weight": null,
+      "source": "https://raw.githubusercontent.com/google/fonts/e7db6ca603fd4862010383ff17ffd6cc4ffac1c0/ofl/bebasneue/BebasNeue-Regular.ttf",
+      "sha256": "08e4623805102d819f58601e46e345648846075e363b2ceb23313c2d1c83ec73",
+      "axes": null,
+      "bundledSha256": "08e4623805102d819f58601e46e345648846075e363b2ceb23313c2d1c83ec73",
+      "bytes": 61400,
+      "license": "SIL Open Font License 1.1",
+      "modified": false
+    },
+    {
+      "id": "oswald",
+      "family": "oswald",
+      "filename": "Oswald[wght].ttf",
+      "weight": 700,
+      "source": "https://raw.githubusercontent.com/google/fonts/e7db6ca603fd4862010383ff17ffd6cc4ffac1c0/ofl/oswald/Oswald%5Bwght%5D.ttf",
+      "sha256": "5b38c246e255a12f5712d640d56bcced0472466fc68983d2d0410ec0457c2817",
+      "axes": {
+        "wght": 700
+      },
+      "bundledSha256": "c33920244abfd1f6b8049b798a5194e35c4cbcceaab27c6e9fb3aeaf5b729bda",
+      "bytes": 88952,
+      "license": "SIL Open Font License 1.1",
+      "modified": true
+    },
+    {
+      "id": "roboto-condensed",
+      "family": "robotocondensed",
+      "filename": "RobotoCondensed[wght].ttf",
+      "weight": 700,
+      "source": "https://raw.githubusercontent.com/google/fonts/e7db6ca603fd4862010383ff17ffd6cc4ffac1c0/ofl/robotocondensed/RobotoCondensed%5Bwght%5D.ttf",
+      "sha256": "dace262afcee68a5276f200d8026c57221735c0118ab5fda8c2c0d3dc409a8d0",
+      "axes": {
+        "wght": 700
+      },
+      "bundledSha256": "24dfb359f3143074ed242c2f51fddd74ec17a546b58a34dcc695289fb291e4f4",
+      "bytes": 144820,
+      "license": "SIL Open Font License 1.1",
+      "modified": true
+    },
+    {
+      "id": "lora",
+      "family": "lora",
+      "filename": "Lora[wght].ttf",
+      "weight": 600,
+      "source": "https://raw.githubusercontent.com/google/fonts/e7db6ca603fd4862010383ff17ffd6cc4ffac1c0/ofl/lora/Lora%5Bwght%5D.ttf",
+      "sha256": "822a6621ccbe8d97d20ac88c1c41f5615c9c2c202eaa75f272cd452aac6475a7",
+      "axes": {
+        "wght": 600
+      },
+      "bundledSha256": "f5d01e10c5b71e98031e70c847686abb99dbb42e8b1a5cacc86aea7e0f25741f",
+      "bytes": 135460,
+      "license": "SIL Open Font License 1.1",
+      "modified": true
+    },
+    {
+      "id": "bangers",
+      "family": "bangers",
+      "filename": "Bangers-Regular.ttf",
+      "weight": null,
+      "source": "https://raw.githubusercontent.com/google/fonts/e7db6ca603fd4862010383ff17ffd6cc4ffac1c0/ofl/bangers/Bangers-Regular.ttf",
+      "sha256": "4160a7311de9342674cce9160cde9fcbb30f48190397d86ff1b70b455af65824",
+      "axes": null,
+      "bundledSha256": "4160a7311de9342674cce9160cde9fcbb30f48190397d86ff1b70b455af65824",
+      "bytes": 93148,
+      "license": "SIL Open Font License 1.1",
+      "modified": false
+    },
+    {
+      "id": "archivo-black",
+      "family": "archivoblack",
+      "filename": "ArchivoBlack-Regular.ttf",
+      "weight": null,
+      "source": "https://raw.githubusercontent.com/google/fonts/e7db6ca603fd4862010383ff17ffd6cc4ffac1c0/ofl/archivoblack/ArchivoBlack-Regular.ttf",
+      "sha256": "dd9a89a019b4849f66ab75455fe7bdf931311042cbb0f0f97acc061539703180",
+      "axes": null,
+      "bundledSha256": "dd9a89a019b4849f66ab75455fe7bdf931311042cbb0f0f97acc061539703180",
+      "bytes": 90988,
+      "license": "SIL Open Font License 1.1",
+      "modified": false
+    }
+  ]
+}

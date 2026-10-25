@@ -1,0 +1,13 @@
+const seconds=t=>Number(t.numerator)/Number(t.denominator);
+export const sequenceDuration=seq=>Math.max(0,...seq.tracks.flatMap(t=>t.items.map(i=>seconds(i.start)+seconds(i.duration))));
+export function nestedMetadata(project,sequenceId){
+ const sequence=project.sequences.find(s=>s.id===sequenceId);if(!sequence)throw Error('Unknown nested source sequence.');const duration=sequenceDuration(sequence);if(duration<.01)throw Error('Nested source must contain at least 0.01 timeline seconds. Remove unused nested assets before clearing their source.');
+ return {duration,width:sequence.canvas.width,height:sequence.canvas.height,hasAudio:true};
+}
+export function synchronizeNestedAssets(project){for(const asset of project.assets)if(asset.kind==='sequence')Object.assign(asset,nestedMetadata(project,asset.sequenceId));}
+export function validateNesting(project){
+ for(const seq of project.sequences)if(seq.nestLayout!==undefined){const l=seq.nestLayout,validId=id=>typeof id==='string'&&id.length>0&&id.length<=120;if(!l||typeof l!=='object'||Array.isArray(l)||Object.keys(l).some(k=>!['parentSequenceId','trackMap'].includes(k))||!validId(l.parentSequenceId)||l.parentSequenceId===seq.id||!project.sequences.some(s=>s.id===l.parentSequenceId)||!Array.isArray(l.trackMap)||!l.trackMap.length||l.trackMap.length>64||l.trackMap.some(m=>!m||typeof m!=='object'||Array.isArray(m)||Object.keys(m).some(k=>!['childTrackId','parentTrackId'].includes(k))||!validId(m.childTrackId)||!validId(m.parentTrackId))||new Set(l.trackMap.map(m=>m.childTrackId)).size!==l.trackMap.length||new Set(l.trackMap.map(m=>m.parentTrackId)).size!==l.trackMap.length)throw Error('Invalid original selection nesting track layout.');}
+ const assets=new Map(project.assets.map(a=>[a.id,a])),edges=new Map(project.sequences.map(s=>[s.id,new Set(s.tracks.flatMap(t=>t.items.map(i=>assets.get(i.assetId)).filter(a=>a?.kind==='sequence').map(a=>a.sequenceId)))]));
+ for(const a of project.assets)if(a.kind==='sequence'){if(typeof a.sequenceId!=='string'||a.file!==undefined)throw Error('Nested assets reference a sequence, not a media file.');const meta=nestedMetadata(project,a.sequenceId);for(const [key,value]of Object.entries(meta))if(key==='duration'?(!Number.isFinite(a.duration)||Math.abs(a.duration-value)>1e-8):a[key]!==value)throw Error('Nested source metadata is stale.');}
+ const visit=(id,ancestors)=>{if(ancestors.includes(id))throw Error('Nested sequence cycle is not allowed.');if(ancestors.length>=4)throw Error('Nesting supports at most four sequence levels.');for(const child of edges.get(id)||[])visit(child,[...ancestors,id]);};for(const id of edges.keys())visit(id,[]);
+}

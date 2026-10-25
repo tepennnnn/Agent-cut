@@ -1,0 +1,1 @@
+{"$schema":"https://agent-plugins.org/schemas/1.0.0/mcp.schema.json","mcpServers":{"agent-cut":{"type":"stdio","command":"node","args":["${PLUGIN_ROOT}/server.mjs","--stdio"],"cwd":"${PLUGIN_ROOT}"}}}

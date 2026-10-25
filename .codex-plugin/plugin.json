@@ -1,0 +1,15 @@
+{
+  "name": "agent-cut",
+  "version": "0.2.0",
+  "description": "Local agentic video editing: timeline, overlays, color, transitions, audio, subtitles and export.",
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "requires_local_executor": true,
+  "interface": {
+    "displayName": "Agent Cut",
+    "shortDescription": "Edit local video with Codex",
+    "longDescription": "Inspect, edit, preview and export a local video timeline using Codex.",
+    "capabilities": [],
+    "defaultPrompt": "Use Agent Cut to inspect my project and apply my video edits."
+  }
+}

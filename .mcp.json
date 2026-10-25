@@ -1,0 +1,1 @@
+{"mcpServers":{"agent-cut":{"command":"node","args":["${PLUGIN_ROOT}/server.mjs","--stdio"]}}}

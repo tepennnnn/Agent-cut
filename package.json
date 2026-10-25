@@ -1,0 +1,35 @@
+{
+  "name": "agent-cut",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "mcp": "node server.mjs --stdio",
+    "test": "node --test --test-concurrency=2 tests.mjs essential-tests.mjs sequence-tests.mjs sequence-render-tests.mjs sequence-edit-tests.mjs keyframe-tests.mjs startup-tests.mjs blend-tests.mjs mask-tests.mjs adjustment-tests.mjs audio-tests.mjs library-tests.mjs media-management-tests.mjs export-tests.mjs subtitle-tests.mjs freeze-tests.mjs reverse-tests.mjs transition-tests.mjs nesting-tests.mjs time-remap-tests.mjs selection-nesting-tests.mjs agent-loop-tests.mjs draft-tests.mjs creator-tests.mjs text-tests.mjs speech-tests.mjs recipe-tests.mjs spherical-reframe-tests.mjs spherical-service-tests.mjs story-tests.mjs chatterbox-tests.mjs caption-motion-tests.mjs story-art-tests.mjs story-speech-tests.mjs caption-font-tests.mjs story-sync-tests.mjs story-workshop-tests.mjs affiliate-tests.mjs video-workspace-tests.mjs",
+    "build:captions": "esbuild scripts/captions-vendor-entry.mjs --bundle --format=esm --minify --outfile=ui/captions-vendor.js",
+    "test:wgfx": "node --test wgfx-tests.mjs",
+    "build:transitions": "node scripts/build-transition-library.mjs",
+    "test:transition-library": "node --test transition-library-tests.mjs",
+    "test:story-art": "node --test story-art-tests.mjs",
+    "test:story-speech": "node --test story-speech-tests.mjs",
+    "test:caption-fonts": "node --test caption-font-tests.mjs",
+    "test:story-sync": "node --test story-sync-tests.mjs",
+    "test:story-workshop": "node --test story-workshop-tests.mjs",
+    "test:affiliate": "node --test affiliate-tests.mjs",
+    "test:video-workspace": "node --test --test-concurrency=1 video-workspace-tests.mjs"
+  },
+  "dependencies": {
+    "captions.js": "1.10.0",
+    "gl-transitions": "1.76.1",
+    "konva": "10.9.0",
+    "playwright-core": "1.64.1",
+    "skia-canvas": "3.0.8"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.12"
+  }
+}
