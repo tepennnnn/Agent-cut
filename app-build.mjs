@@ -1,1 +1,1 @@
-export const BUILD='video-workspace-2026-10-25';
+export const BUILD='voxcpm2-local-2026-10-28';

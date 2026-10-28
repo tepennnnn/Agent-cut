@@ -208,7 +208,7 @@ export async function atomic(file, value) {
     }
   } catch(e) {await fs.rm(tmp,{force:true});throw e;}
 }
-export async function run(command,args,{cwd,timeout=120000}={}) {
+export async function run(command,args,{cwd,timeout=120000,allowedExitCodes=[0]}={}) {
   const scope=checkJob();
   return new Promise((resolve,reject)=>{
     const p=spawn(command,args,{cwd,windowsHide:true,stdio:['ignore','pipe','pipe'],shell:false});
@@ -216,7 +216,7 @@ export async function run(command,args,{cwd,timeout=120000}={}) {
     const timer=setTimeout(()=>{p.kill();finish(Error('Local encoder timed out.'));},timeout);
     const finish=(error)=>{if(settled)return;settled=true;if(p.pid)scope?.onExit?.(p.pid);clearTimeout(timer);scope?.signal.removeEventListener('abort',canceled);if(scope?.signal.aborted)reject(Error('JOB_CANCELED'));else error?reject(error):resolve({out,err});};
     p.stdout.on('data',b=>out=(out+b).slice(-1000000));p.stderr.on('data',b=>err=(err+b).slice(-1000000));
-    p.on('error',finish);p.on('close',code=>finish(code===0?null:Error(`Encoder failed (${code}): ${err.slice(-2000)}`)));
+    p.on('error',finish);p.on('close',code=>finish(allowedExitCodes.includes(code)?null:Error(`Encoder failed (${code}): ${err.slice(-2000)}`)));
   });
 }
 const base=['-hide_banner','-nostdin','-loglevel','info'];

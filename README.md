@@ -1,5 +1,9 @@
 # Agent Cut
 
+## Local Tagalog voice cloning — 2026-10-28
+
+Optional VoxCPM2 narration is available through Story/Affiliate Studio and `story_sync` with `engine: "voxcpm2"`. Import a short reference from your own recording, generate bounded local sentence audio, and review a separate story draft before applying it. [Setup, Hermes instructions, hardware limits and verification](voxcpm-local.md). CPU/Oracle performance remains unmeasured; model files and personal voices are installed separately and excluded from Git.
+
 ## Narration replacement and word alignment — 2026-10-25
 
 Review replacement narration with automatically resynced scenes and captions, then apply or undo it without losing images and styling. Optional offline English CTC alignment supplies acoustic word timings; proportional estimates remain explicit. See [workflow, setup and limits](narration-resync.md).

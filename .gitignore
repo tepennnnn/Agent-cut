@@ -11,6 +11,8 @@ __pycache__/
 *.ckpt
 *.safetensors
 *.onnx
+*.gguf
+*.partial
 
 # Private editor state: projects, stories, voices, media, jobs and session tokens
 /data/

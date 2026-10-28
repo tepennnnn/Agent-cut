@@ -9,6 +9,7 @@ import {sentenceChunks,sentenceCaptions} from './story-speech.mjs';
 import {StoryArtService} from './story-art-service.mjs';
 import {transitionCatalog,transitionSettings} from './ui/transition-model.js';
 import {captionStyles,captionStyleIds,motionStyle} from './ui/caption-model.js';
+import {VoxCPMService,validateVoxChunks} from './voxcpm-service.mjs';
 import {ChatterboxService} from './chatterbox-service.mjs';
 import {validateFrozenInputs} from './job-inputs.mjs';
 import fs from 'node:fs/promises';
@@ -37,7 +38,7 @@ export function wavSeconds(buffer){
  if(!rate||!size)fail('Generated audio is empty.');return size/rate;
 }
 export class StoryService {
- constructor(store,renderer){this.store=store;this.renderer=renderer;this.root=path.join(store.root,'stories');this.chatterbox=new ChatterboxService(store);this.art=new StoryArtService(this);this.sync=new StorySyncService(this);this.creator=new StoryCreatorService(this);this.affiliate=new AffiliateService(this);this.videos=new StoryVideoService(this);}
+ constructor(store,renderer){this.store=store;this.renderer=renderer;this.root=path.join(store.root,'stories');this.chatterbox=new ChatterboxService(store);this.voxcpm=new VoxCPMService(store);this.art=new StoryArtService(this);this.sync=new StorySyncService(this);this.creator=new StoryCreatorService(this);this.affiliate=new AffiliateService(this);this.videos=new StoryVideoService(this);}
  async ready(){await fs.mkdir(this.root,{recursive:true});}
  async voiceRequest(request,dir){
   await fs.mkdir(dir,{recursive:true});const input=path.join(dir,'voice-request.json');await atomic(input,request);
@@ -53,7 +54,7 @@ export class StoryService {
  file(id){return path.join(this.root,key(id)+'.json');}
  async read(id){const d=JSON.parse(await fs.readFile(this.file(id),'utf8'));this.store.checkIdentity(d.projectId);return d;}
  async generate(args){
-  const scenes=splitStory(args.script),chunks=speechChunks(scenes),engine=args.engine??'windows';if(!['windows','chatterbox'].includes(engine))fail('Choose Windows or Chatterbox TTS.');
+  const scenes=splitStory(args.script),chunks=speechChunks(scenes),engine=args.engine??'windows';if(!['windows','chatterbox','voxcpm2'].includes(engine))fail('Choose Windows, Chatterbox or VoxCPM2 TTS.');if(engine==='voxcpm2')validateVoxChunks(chunks);
   if(typeof args.voice!=='string'||! /^[A-Za-z0-9_.-]{1,160}$/.test(args.voice))fail('Choose a voice.');
   const rate=args.rate??0;if(!Number.isInteger(rate)||rate< -5||rate>5)fail('Voice rate must be an integer from -5 to 5.');
   const shape=args.shape??'portrait';if(!['portrait','landscape','square'].includes(shape))fail('Choose portrait, landscape or square.');
@@ -63,7 +64,7 @@ export class StoryService {
   const title=typeof args.title==='string'?args.title.trim():'Untitled story';if(!title||title.length>120)fail('Title must contain 1–120 characters.');
   this.store.checkIdentity(args.expectedProjectId);await this.ready();
   const artSettings=await this.art.settings(args.artSettings??{});
-  const tts=engine==='chatterbox'?await this.chatterbox.freeze(args.voice):null;
+  const tts=engine==='voxcpm2'?await this.voxcpm.freeze(args.voice):engine==='chatterbox'?await this.chatterbox.freeze(args.voice):null;
   return this.renderer.jobService.start('story-voice',{engine,tts,artSettings,speechSegmentation:'sentence-v1',storyId:randomUUID(),projectId:this.store.projectId,title,scenes,chunks,voice:args.voice,rate,shape,captionStyle:style,captionFont,transition},(r,j)=>this.execute(r,j),{revision:this.store.db.revision,engine});
  }
  async execute(request,job){
@@ -73,8 +74,8 @@ export class StoryService {
   const storyId=await fs.stat(this.file(request.storyId)).catch(()=>null)?randomUUID():request.storyId;
   const work=path.join(this.store.root,'exports',job.id);await fs.mkdir(work,{recursive:true});
   let generation={engine:'windows'};
-  if(request.engine==='chatterbox'){
-   generation=await this.chatterbox.generate(request.tts,request.chunks,work,job);
+  if(['chatterbox','voxcpm2'].includes(request.engine)){
+   generation=await (request.engine==='voxcpm2'?this.voxcpm:this.chatterbox).generate(request.tts,request.chunks,work,job);
    if(request.rate!==0){const factor=2**(request.rate/10);for(let i=0;i<request.chunks.length;i++){const file=path.join(work,'part-'+i+'.wav'),raw=path.join(work,'raw-part-'+i+'.wav');await fs.rename(file,raw);await run(this.store.ffmpeg,['-hide_banner','-nostdin','-y','-i',raw,'-af','atempo='+factor,'-c:a','pcm_s16le',file]);}}
   }else await this.voiceRequest({action:'generate',voice:request.voice,rate:request.rate,chunks:request.chunks,outputDir:work},work);
   let cursor=0;const captions=[],scenes=request.scenes.map((text,index)=>({id:randomUUID(),text,index,start:0,end:0,imageId:null}));
@@ -165,6 +166,6 @@ export class StoryService {
   if(args.action?.startsWith('creator_'))return this.creator.call(args);
   if(args.action?.startsWith('sync_'))return this.sync.call(args);
   if(args.action?.startsWith('art_'))return this.art.call(args);
-  switch(args.action){case 'transition_sample':return transitionSample(this,args);case 'video_prompt_pack':return this.videos.prompts(args);case 'video_import':return this.videos.import(args.path);case 'video_read':return this.videos.read(args.creatorOptions?.clipId);case 'caption_fonts':return {fonts:await fontCatalog(),default:'preset',offline:true,note:'Font choice is independent of caption animation style. Bundled local fonts; no runtime downloads.'};case 'transition_styles':return {transitions:[{id:'none',name:'Cut (no transition)',adapted:false},...transitionCatalog],note:'257 offline transitions: basics, FFmpeg, original GL shaders and WGFX adaptations. GL uses installed local Chrome/Edge.'};case 'caption_styles':return {styles:captionStyles,renderer:'captions.js 1.10.0',timing:'Word timing is estimated within measured phrases',offline:true};case 'voices':return args.engine==='chatterbox'?this.chatterbox.voices():this.voices();case 'tts_status':return this.chatterbox.status();case 'tts_configure':return this.store.serial(()=>this.chatterbox.configure(args.settings));case 'voice_import':return this.chatterbox.importVoice(args.path);case 'list':return this.list();case 'read':return this.read(args.storyId);case 'generate':return this.generate(args);case 'image':return this.importImage(args.path);case 'update':return this.update(args);case 'preview':return this.preview(args);case 'export':return this.export(args);case 'apply':return this.apply(args);default:fail('Unknown story action.');}
+  switch(args.action){case 'transition_sample':return transitionSample(this,args);case 'video_prompt_pack':return this.videos.prompts(args);case 'video_import':return this.videos.import(args.path);case 'video_read':return this.videos.read(args.creatorOptions?.clipId);case 'caption_fonts':return {fonts:await fontCatalog(),default:'preset',offline:true,note:'Font choice is independent of caption animation style. Bundled local fonts; no runtime downloads.'};case 'transition_styles':return {transitions:[{id:'none',name:'Cut (no transition)',adapted:false},...transitionCatalog],note:'257 offline transitions: basics, FFmpeg, original GL shaders and WGFX adaptations. GL uses installed local Chrome/Edge.'};case 'caption_styles':return {styles:captionStyles,renderer:'captions.js 1.10.0',timing:'Word timing is estimated within measured phrases',offline:true};case 'voices':return args.engine==='voxcpm2'?this.voxcpm.voices():args.engine==='chatterbox'?this.chatterbox.voices():this.voices();case 'tts_status':return (args.engine==='voxcpm2'?this.voxcpm:this.chatterbox).status();case 'tts_configure':return this.store.serial(()=>(args.engine==='voxcpm2'?this.voxcpm:this.chatterbox).configure(args.settings));case 'voice_import':return args.engine==='voxcpm2'?this.voxcpm.importVoice(args.path,undefined,args.referenceStart??0,args.referenceSeconds??6):this.chatterbox.importVoice(args.path);case 'list':return this.list();case 'read':return this.read(args.storyId);case 'generate':return this.generate(args);case 'image':return this.importImage(args.path);case 'update':return this.update(args);case 'preview':return this.preview(args);case 'export':return this.export(args);case 'apply':return this.apply(args);default:fail('Unknown story action.');}
  }
 }

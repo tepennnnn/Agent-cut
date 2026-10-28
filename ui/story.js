@@ -51,9 +51,9 @@ $('caption-style').addEventListener('change',()=>{captionChoice();if(draft)inval
 
 function controls(){
 
- $('generate').disabled=busy||!$('voice').value||$('engine').value==='chatterbox'&&!ttsReady;
+ $('generate').disabled=busy||!$('voice').value||$('engine').value!=='windows'&&!ttsReady;
 
- $('engine').disabled=busy;$('tts-configure').disabled=busy;$('reference-file').disabled=busy;
+ $('engine').disabled=busy;$('tts-configure').disabled=busy;$('vox-configure').disabled=busy;$('reference-file').disabled=busy;
 
  $('compose').disabled=busy||!draft||draft.scenes.some(s=>!s.imageId&&!s.video);
 
@@ -81,11 +81,11 @@ function controls(){
 
 async function action(fn){if(busy)return;busy=true;controls();try{await fn();}catch(e){status(e.message,true);}finally{busy=false;currentJob=null;controls();}}
 
-async function wait(job){currentJob=job;$('progress').value=0;controls();while(true){const result=await call('render_status',{jobId:job.id});$('progress').value=result.progress||0;if(result.kind==='story-voice'&&result.engine==='chatterbox'&&['queued','rendering'].includes(result.status))status(result.speechTotal?`Generating local speech · ${result.speechCompleted}/${result.speechTotal} phrases · ${result.device}`:'Loading local Chatterbox model… The first phrase may take longer.');if(result.phase&&['story-scene-voice','story-scene-image','story-quality'].includes(result.kind)&&['queued','rendering'].includes(result.status))status(result.phase+'…');if(result.transitionStage&&['queued','rendering'].includes(result.status))status('Preparing '+result.transitionStage.replace('Rendering ','')+' transition…');if(result.status==='complete')return result;if(['failed','canceled','interrupted'].includes(result.status))throw Error(result.error||'Job '+result.status);await new Promise(r=>setTimeout(r,750));}}
+async function wait(job){currentJob=job;$('progress').value=0;controls();while(true){const result=await call('render_status',{jobId:job.id});$('progress').value=result.progress||0;if(result.kind==='story-voice'&&['chatterbox','voxcpm2'].includes(result.engine)&&['queued','rendering'].includes(result.status))status(result.speechTotal?`Generating local speech · ${result.speechCompleted}/${result.speechTotal} phrases · ${result.device}`:'Loading local '+result.engine+' model… The first sentence may take longer.');if(result.phase&&['story-scene-voice','story-scene-image','story-quality'].includes(result.kind)&&['queued','rendering'].includes(result.status))status(result.phase+'…');if(result.transitionStage&&['queued','rendering'].includes(result.status))status('Preparing '+result.transitionStage.replace('Rendering ','')+' transition…');if(result.status==='complete')return result;if(['failed','canceled','interrupted'].includes(result.status))throw Error(result.error||'Job '+result.status);await new Promise(r=>setTimeout(r,750));}}
 
 async function refreshVoices(selected){
 
- const engine=$('engine').value;$('chatterbox-panel').hidden=engine!=='chatterbox';
+ const engine=$('engine').value;$('chatterbox-panel').hidden=engine==='windows';$('chatterbox-setup').hidden=engine!=='chatterbox';$('voxcpm-setup').hidden=engine!=='voxcpm2';$('reference-label').textContent=engine==='voxcpm2'?'Import VoxCPM2 voice reference':'Import voice reference (5.1–30 seconds)';$('reference-note').textContent=engine==='voxcpm2'?'Use a clear speech recording. The reference interval in VoxCPM2 setup selects a short local segment.':'Use a clean English speech clip for a voice you have permission to use, or choose the built-in voice below.';
 
  if(engine==='chatterbox'){
 
@@ -99,9 +99,10 @@ async function refreshVoices(selected){
 
  }
 
+ if(engine==='voxcpm2'){const s=await story('tts_status',{engine});ttsReady=s.ready;const c=s.settings||s.defaults||{};for(const [id,key]of [['vox-backend','backend'],['vox-runner','runnerPath'],['vox-base','baseModelPath'],['vox-acoustic','acousticModelPath'],['vox-timeout','sentenceTimeoutSeconds'],['vox-budget','jobTimeoutSeconds']])$(id).value=c[key]??'';$('tts-status').textContent=s.ready?'Ready · VoxCPM2 · '+c.backend+' · local; listen before publishing':s.message;$('tts-status').classList.toggle('error',!s.ready);}
  const voices=await story('voices',{engine});$('voice').innerHTML=voices.voices.map(v=>`<option value="${esc(v.id)}">${esc(v.name)} · ${esc(v.language)}</option>`).join('');
 
- if(!voices.voices.length){$('voice').innerHTML='<option value="">No voices available</option>';$('voice-note').textContent=voices.unavailable||'No local voices are available.';}else $('voice-note').textContent=engine==='chatterbox'?'English local AI narration. Generated audio determines scene/caption timing.':'Offline installed Windows voices.';
+ if(!voices.voices.length){$('voice').innerHTML='<option value="">No voices available</option>';$('voice-note').textContent=voices.unavailable||'No local voices are available.';}else $('voice-note').textContent=engine==='voxcpm2'?'Experimental Tagalog narration; review pronunciation and timing.':engine==='chatterbox'?'English local AI narration. Generated audio determines scene/caption timing.':'Offline installed Windows voices.';
 
  if(selected&&voices.voices.some(v=>v.id===selected))$('voice').value=selected;controls();
 
@@ -111,7 +112,9 @@ $('engine').addEventListener('change',()=>action(()=>refreshVoices()));
 
 $('tts-configure').addEventListener('click',()=>action(async()=>{status('Checking the local Chatterbox runtime…');await story('tts_configure',{settings:{pythonPath:$('tts-python').value,modelDir:$('tts-model-dir').value,model:$('tts-model').value,device:$('tts-device').value,threads:Number($('tts-threads').value)}});await refreshVoices();status('Local Chatterbox is ready. Choose a voice and generate narration.');}));
 
-$('reference-file').addEventListener('change',()=>action(async()=>{const file=$('reference-file').files[0];if(!file)return;status('Importing local voice reference…');const v=await request('/api/story-voice',{method:'POST',headers:{'x-agent-cut-project-id':project.projectId,'x-file-name':encodeURIComponent(file.name)},body:file});await refreshVoices(v.id);$('reference-file').value='';status('Voice reference imported. It stays on this PC.');}));
+$('vox-configure').addEventListener('click',()=>action(async()=>{status('Verifying VoxCPM2 model hashes…');await story('tts_configure',{engine:'voxcpm2',settings:{backend:$('vox-backend').value,runnerPath:$('vox-runner').value,baseModelPath:$('vox-base').value,acousticModelPath:$('vox-acoustic').value,sentenceTimeoutSeconds:Number($('vox-timeout').value),jobTimeoutSeconds:Number($('vox-budget').value)}});await refreshVoices();status('Local VoxCPM2 configuration verified.');}));
+
+$('reference-file').addEventListener('change',()=>action(async()=>{const file=$('reference-file').files[0];if(!file)return;status('Importing local voice reference…');const v=await request('/api/story-voice?'+new URLSearchParams({engine:$('engine').value,start:$('vox-reference-start').value,seconds:$('vox-reference-seconds').value}),{method:'POST',headers:{'x-agent-cut-project-id':project.projectId,'x-file-name':encodeURIComponent(file.name)},body:file});await refreshVoices(v.id);$('reference-file').value='';status('Voice reference imported. It stays on this PC.');}));
 
 async function saved(){const {stories}=await story('list');$('saved').innerHTML='<option value="">Choose a story…</option>'+stories.map(d=>`<option value="${esc(d.id)}">${esc(d.title)} · ${d.scenes} scenes</option>`).join('');if(draft)$('saved').value=draft.id;}
 
